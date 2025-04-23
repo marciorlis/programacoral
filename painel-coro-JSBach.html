@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programação dos Hinos do Coral J. S. Bach</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f2f2f2;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background-color: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .linha-destaque td {
+      font-weight: bold;
+      background-color: #fab;
+    }
+  </style>
+</head>
+<body>
+  <h2>Programação dos Hinos do Coral J. S. Bach</h2>
+  <table id="tabela-planilha"></table>
+
+  <script>
+    const apiKey = 'AIzaSyCTRhW7G9Nv0pZ2PqhVgzfAofINtDKCcbs';
+    const sheetId = '1SAyJbXZZNADsOqlZhfwemb_A-r4eG6Cd_T2vphdmvi4';
+    const range = 'Painel!B2:B18';
+
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const tabela = document.getElementById('tabela-planilha');
+        const valores = data.values;
+
+        if (!valores || valores.length === 0) {
+          tabela.innerHTML = '<tr><td>Nenhum dado encontrado.</td></tr>';
+          return;
+        }
+
+        const thead = document.createElement('thead');
+        const trHead = document.createElement('tr');
+        valores[0].forEach(cell => {
+          const th = document.createElement('th');
+          th.textContent = cell;
+          trHead.appendChild(th);
+        });
+        thead.appendChild(trHead);
+        tabela.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        for (let i = 1; i < valores.length; i++) {
+          const tr = document.createElement('tr');
+
+          // Verifica se a linha contém pelo menos uma célula com número e hífen (ex: "-5")
+          const linha = valores[i];
+          const contemNumeroNegativo = linha.some(cell => /-?\d+/.test(cell));
+          if (contemNumeroNegativo) {
+            tr.classList.add('linha-destaque');
+          }
+
+          linha.forEach(cell => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        }
+        tabela.appendChild(tbody);
+      })
+      .catch(error => {
+        console.error('Erro ao carregar a planilha:', error);
+        document.getElementById('tabela-planilha').innerHTML = '<tr><td>Erro ao carregar os dados da planilha.</td></tr>';
+      });
+  </script>
+</body>
+</html>
