@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Programação dos Hinos do Coral J. S. Bach</title>
+  <title>Conjunto Coral J. S. Bach</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,6 +14,7 @@
       border-collapse: collapse;
       width: 100%;
       background-color: #fff;
+      font-size: 18px;
     }
     th, td {
       border: 1px solid #ccc;
@@ -29,12 +30,18 @@
     }
     .linha-destaque td {
       font-weight: bold;
-      background-color: #fab;
+      background-color: #eeedba;
+      font-size: 24px;
+    }
+    .linha-italico {
+      font-style: italic;
+      background-color: #fefdd2;
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
-  <h2>Programação dos Hinos do Coral J. S. Bach</h2>
+  <h2>Conjunto Coral J. S. Bach</h2>
   <table id="tabela-planilha"></table>
 
   <script>
@@ -66,14 +73,17 @@
         tabela.appendChild(thead);
 
         const tbody = document.createElement('tbody');
+        let lastHighlightedRow = -1; // Variável para armazenar a última linha destacada
+
         for (let i = 1; i < valores.length; i++) {
           const tr = document.createElement('tr');
+          const linha = valores[i];
 
           // Verifica se a linha contém pelo menos uma célula com número e hífen (ex: "-5")
-          const linha = valores[i];
           const contemNumeroNegativo = linha.some(cell => /-?\d+/.test(cell));
           if (contemNumeroNegativo) {
             tr.classList.add('linha-destaque');
+            lastHighlightedRow = i; // Marca a linha destacada
           }
 
           linha.forEach(cell => {
@@ -81,6 +91,12 @@
             td.textContent = cell;
             tr.appendChild(td);
           });
+
+          // Se a linha anterior foi destacada, torna a linha seguinte em itálico
+          if (lastHighlightedRow === i - 1) {
+            tr.classList.add('linha-italico');
+          }
+
           tbody.appendChild(tr);
         }
         tabela.appendChild(tbody);
@@ -90,5 +106,6 @@
         document.getElementById('tabela-planilha').innerHTML = '<tr><td>Erro ao carregar os dados da planilha.</td></tr>';
       });
   </script>
+
 </body>
 </html>
